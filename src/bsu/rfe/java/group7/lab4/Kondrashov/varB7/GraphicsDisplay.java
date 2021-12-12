@@ -56,4 +56,30 @@ public class GraphicsDisplay extends JPanel {
         // Шрифт для подписей осей координат
         axisFont = new Font("Serif", Font.BOLD, 36);
     }
+
+    // Данный метод вызывается из обработчика элемента меню "Открыть файл с графиком"
+    // главного окна приложения в случае успешной загрузки данных
+    public void showGraphics(Double[][] graphicsData) {
+        // Сохранить массив точек во внутреннем поле класса
+        this.graphicsData = graphicsData;
+        // Запросить перерисовку компонента, т.е. неявно вызвать paintComponent()
+        repaint();
+    }
+
+    // Методы-модификаторы для изменения параметров отображения графика
+    // Изменение любого параметра приводит к перерисовке области
+    public void setShowAxis(boolean showAxis) {
+        this.showAxis = showAxis;
+        repaint();
+    }
+
+    public void setShowMarkers(boolean showMarkers) {
+        this.showMarkers = showMarkers;
+        repaint();
+    }
+
+    public void setShowIntGraphics(boolean showIntGraphics) {
+        this.showIntGraphics = showIntGraphics;
+        repaint();
+    }
 }
