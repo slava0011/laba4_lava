@@ -36,4 +36,24 @@ public class GraphicsDisplay extends JPanel {
     private BasicStroke graphicsIntStroke;
     // Различные шрифты отображения надписей
     private Font axisFont;
+
+    public GraphicsDisplay() {
+        // Цвет заднего фона области отображения - белый
+        setBackground(Color.WHITE);
+        // Сконструировать необходимые объекты, используемые в рисовании
+        // Перо для рисования графика
+        graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_ROUND, 10.0f, new float[] {2,1,1,1,1,1,1,1,2,1,1,1,2}, 0.0f);
+        // Перо для рисования целой части графика
+        graphicsIntStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
+        // Перо для рисования осей координат
+        axisStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
+        // Перо для рисования контуров маркеров
+        markerStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
+        // Шрифт для подписей осей координат
+        axisFont = new Font("Serif", Font.BOLD, 36);
+    }
 }
