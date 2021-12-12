@@ -95,7 +95,7 @@ public class MainFrame extends JFrame {
         // Элемент по умолчанию включен (отмечен флажком)
         showMarkersMenuItem.setSelected(true);
         // Создать действие для элемента "Отобразить функцию «Целая часть f»"
-        Action showIntGraphicsAction = new AbstractAction("Отобразить функцию «Целая часть f»") {
+        Action showIntGraphicsAction = new AbstractAction("Отобразить функцию «Модуль f»") {
             public void actionPerformed(ActionEvent e) {
                 display.setShowIntGraphics(showIntGraphicsMenuItem.isSelected());
             }

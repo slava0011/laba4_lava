@@ -43,7 +43,7 @@ public class GraphicsDisplay extends JPanel {
         // Сконструировать необходимые объекты, используемые в рисовании
         // Перо для рисования графика
         graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_ROUND, 10.0f, new float[] {2,1,1,1,1,1,1,1,2,1,1,1,2}, 0.0f);
+                BasicStroke.JOIN_ROUND, 10.0f, new float[] {1,1,2,1,1,1,3,1,2,1,1}, 0.0f);
         // Перо для рисования целой части графика
         graphicsIntStroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
@@ -193,13 +193,13 @@ public class GraphicsDisplay extends JPanel {
         GeneralPath intGraphics = new GeneralPath();
         for (int i = 0; i < graphicsData.length; i++) {
             // Преобразовать значения (x,y) в точку на экране point
-            Point2D.Double point = xyToPoint(graphicsData[i][0], graphicsData[i][1].intValue());
+            Point2D.Double point = xyToPoint(graphicsData[i][0], Math.abs(graphicsData[i][1]));
             if (i > 0) {
-                if (graphicsData[i][1].intValue() == graphicsData[i - 1][1].intValue())
+                if (Math.abs(graphicsData[i][1]) == Math.abs(graphicsData[i - 1][1]))
                     intGraphics.lineTo(point.getX(), point.getY());
                 else {
                     intGraphics.lineTo(point.getX(),
-                            xyToPoint(graphicsData[i][0], graphicsData[i - 1][1].intValue()).getY());
+                            xyToPoint(graphicsData[i][0], Math.abs(graphicsData[i - 1][1])).getY());
                     intGraphics.moveTo(point.getX(), point.getY());
                 }
             } else {
@@ -212,7 +212,13 @@ public class GraphicsDisplay extends JPanel {
 
     }
 
+    //условие
     protected boolean isSumLessThanTen(Double[] point) {
+        int valueFuncInt = point[1].intValue();
+        if(valueFuncInt == point[1].doubleValue()*point[1].doubleValue()) return true;
+        return false;
+    }
+    /*protected boolean isSumLessThanTen(Double[] point) {
         int valueFuncInt = point[1].intValue();
         int sum = 0;
         while(valueFuncInt > 0) {
@@ -220,7 +226,7 @@ public class GraphicsDisplay extends JPanel {
             valueFuncInt /= 10;
         }
         return sum < 10 ? true : false;
-    }
+    }*/
     // Отображение маркеров точек, по которым рисовался график
     protected void paintMarkers(Graphics2D canvas) {
 
@@ -233,68 +239,44 @@ public class GraphicsDisplay extends JPanel {
         canvas.setPaint(Color.RED);
 
         for (Double[] point : graphicsData) {
+            // Нарисуем треугольгик как сложную линию
+            GeneralPath marker = new GeneralPath();
+
+            // Центр - в точке (x,y)
             Point2D.Double center = xyToPoint(point[0], point[1]);
-            GeneralPath path = new GeneralPath();
-            path.moveTo(center.x + 0, center.y + 5);
-            path.lineTo(center.x - 1, center.y + 4);
-            path.lineTo(center.x - 1, center.y + 2);
-            path.lineTo(center.x - 2, center.y + 2);
-            path.lineTo(center.x - 3, center.y + 1);
-            path.lineTo(center.x - 4, center.y + 1);
-            path.lineTo(center.x - 5, center.y + 0);
-            path.lineTo(center.x - 4, center.y - 1);
-            path.lineTo(center.x - 3, center.y - 1);
-            path.lineTo(center.x - 2, center.y - 2);
-            path.lineTo(center.x - 1, center.y - 2);
-            path.lineTo(center.x - 1, center.y - 4);
-            path.lineTo(center.x + 0, center.y - 5);
-            path.lineTo(center.x + 1, center.y - 4);
-            path.lineTo(center.x + 1, center.y - 2);
-            path.lineTo(center.x + 2, center.y - 2);
-            path.lineTo(center.x + 3, center.y - 1);
-            path.lineTo(center.x + 4, center.y - 1);
-            path.lineTo(center.x + 5, center.y + 0);
-            path.lineTo(center.x + 4, center.y + 1);
-            path.lineTo(center.x + 3, center.y + 1);
-            path.lineTo(center.x + 2, center.y + 2);
-            path.lineTo(center.x + 1, center.y + 2);
-            path.lineTo(center.x + 1, center.y + 4);
-            path.lineTo(center.x + 0, center.y + 5);
-            canvas.draw(path);
+
+            // Углы треугольника и их соединение
+            Point2D.Double corner1 = shiftPoint(center, -5.5, -5.5);
+            Point2D.Double corner2 = shiftPoint(center, 5.5, -5.5);
+            Point2D.Double corner3 = shiftPoint(center, 0, 5.5);
+            marker.append(new Line2D.Double(corner1, corner2), true);
+            marker.append(new Line2D.Double(corner2, corner3), true);
+            marker.append(new Line2D.Double(corner3, corner1), true);
+
+            canvas.draw(marker); // Начертить контур маркера
+            //canvas.fill(marker); // Залить внутреннюю область маркера
         }
         // Шаг 2 - Организовать цикл по всем точкам графика
         for (Double[] point : graphicsData) {
             canvas.setPaint(Color.BLUE);
 
             if(isSumLessThanTen(point)) {
+                // Нарисуем треугольгик как сложную линию
+                GeneralPath marker = new GeneralPath();
+
+                // Центр - в точке (x,y)
                 Point2D.Double center = xyToPoint(point[0], point[1]);
-                GeneralPath path = new GeneralPath();
-                path.moveTo(center.x + 0, center.y + 5);
-                path.lineTo(center.x - 1, center.y + 4);
-                path.lineTo(center.x - 1, center.y + 2);
-                path.lineTo(center.x - 2, center.y + 2);
-                path.lineTo(center.x - 3, center.y + 1);
-                path.lineTo(center.x - 4, center.y + 1);
-                path.lineTo(center.x - 5, center.y + 0);
-                path.lineTo(center.x - 4, center.y - 1);
-                path.lineTo(center.x - 3, center.y - 1);
-                path.lineTo(center.x - 2, center.y - 2);
-                path.lineTo(center.x - 1, center.y - 2);
-                path.lineTo(center.x - 1, center.y - 4);
-                path.lineTo(center.x + 0, center.y - 5);
-                path.lineTo(center.x + 1, center.y - 4);
-                path.lineTo(center.x + 1, center.y - 2);
-                path.lineTo(center.x + 2, center.y - 2);
-                path.lineTo(center.x + 3, center.y - 1);
-                path.lineTo(center.x + 4, center.y - 1);
-                path.lineTo(center.x + 5, center.y + 0);
-                path.lineTo(center.x + 4, center.y + 1);
-                path.lineTo(center.x + 3, center.y + 1);
-                path.lineTo(center.x + 2, center.y + 2);
-                path.lineTo(center.x + 1, center.y + 2);
-                path.lineTo(center.x + 1, center.y + 4);
-                path.lineTo(center.x + 0, center.y + 5);
-                canvas.draw(path);
+
+                // Углы треугольника и их соединение
+                Point2D.Double corner1 = shiftPoint(center, -5.5, -5.5);
+                Point2D.Double corner2 = shiftPoint(center, 5.5, -5.5);
+                Point2D.Double corner3 = shiftPoint(center, 0, 5.5);
+                marker.append(new Line2D.Double(corner1, corner2), true);
+                marker.append(new Line2D.Double(corner2, corner3), true);
+                marker.append(new Line2D.Double(corner3, corner1), true);
+
+                canvas.draw(marker); // Начертить контур маркера
+                //canvas.fill(marker); // Залить внутреннюю область маркера
             }
         }
     }
@@ -332,11 +314,17 @@ public class GraphicsDisplay extends JPanel {
             canvas.fill(arrow); // Закрасить стрелку
             // Нарисовать подпись к оси Y
             // Определить, сколько места понадобится для надписи "y"
+
             Rectangle2D bounds = axisFont.getStringBounds("y", context);
             Point2D.Double labelPos = xyToPoint(0, maxY);
+
             // Вывести надпись в точке с вычисленными координатами
-            canvas.drawString("y", (float) labelPos.getX() + 10,
-                    (float) (labelPos.getY() - bounds.getY()));
+            canvas.drawString("y", (float)labelPos.getX() + 10, (float)(labelPos.getY() - bounds.getY()));
+            bounds = axisFont.getStringBounds("0", context);
+            labelPos = xyToPoint(0, 0);
+            // Вывести надпись в точке с вычисленными координатами
+            //canvas.drawString("0", (float) labelPos.getX() + 10,
+            //        (float) (labelPos.getY() - bounds.getY()));
         }
         // Определить, должна ли быть видна ось X на графике
         if (minY <= 0.0 && maxY >= 0.0) {
@@ -361,11 +349,12 @@ public class GraphicsDisplay extends JPanel {
             canvas.fill(arrow); // Закрасить стрелку
             // Нарисовать подпись к оси X
             // Определить, сколько места понадобится для надписи "x"
-            Rectangle2D bounds = axisFont.getStringBounds("x", context);
-            Point2D.Double labelPos = xyToPoint(maxX, 0);
+            Rectangle2D bounds = axisFont.getStringBounds("x", context); // Подпись к оси X
+            Point2D.Double labelPos = xyToPoint(maxX, 0); // Cколько места понадобится для надписи "x"
+
             // Вывести надпись в точке с вычисленными координатами
-            canvas.drawString("x", (float) (labelPos.getX() -
-                    bounds.getWidth() - 10), (float) (labelPos.getY() + bounds.getY()));
+            canvas.drawString("x", (float)(labelPos.getX() - bounds.getWidth() - 10),
+                    (float)(labelPos.getY() + bounds.getY()));
         }
     }
 
