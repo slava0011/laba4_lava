@@ -1,5 +1,6 @@
 package bsu.rfe.java.group7.lab4.Kondrashov.varB7;
 
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.io.DataInputStream;
