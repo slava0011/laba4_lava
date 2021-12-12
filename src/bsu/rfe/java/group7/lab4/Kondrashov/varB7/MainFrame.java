@@ -50,5 +50,18 @@ public class MainFrame extends JFrame {
         // Добавить пункт меню "Файл"
         JMenu fileMenu = new JMenu("Файл");
         menuBar.add(fileMenu);
+
+        // Создать действие по открытию файла
+        Action openGraphicsAction = new AbstractAction("Открыть файл с графиком") {
+            public void actionPerformed(ActionEvent event) {
+                if (fileChooser==null) {
+                    fileChooser = new JFileChooser();
+                    fileChooser.setCurrentDirectory(new File("."));
+                }
+                if (fileChooser.showOpenDialog(MainFrame.this) ==
+                        JFileChooser.APPROVE_OPTION)
+                    openGraphics(fileChooser.getSelectedFile());
+            }
+        };
     }
 }
