@@ -54,7 +54,7 @@ public class MainFrame extends JFrame {
         // Создать действие по открытию файла
         Action openGraphicsAction = new AbstractAction("Открыть файл с графиком") {
             public void actionPerformed(ActionEvent event) {
-                if (fileChooser==null) {
+                if (fileChooser == null) {
                     fileChooser = new JFileChooser();
                     fileChooser.setCurrentDirectory(new File("."));
                 }
@@ -63,5 +63,50 @@ public class MainFrame extends JFrame {
                     openGraphics(fileChooser.getSelectedFile());
             }
         };
+
+        // Добавить соответствующий элемент меню
+        fileMenu.add(openGraphicsAction);
+        // Создать пункт меню "График"
+        JMenu graphicsMenu = new JMenu("График");
+        menuBar.add(graphicsMenu);
+        // Создать действие для реакции на активацию элемента "Показывать оси координат"
+        Action showAxisAction = new AbstractAction("Показывать оси координат") {
+            public void actionPerformed(ActionEvent event) {
+                // свойство showAxis класса GraphicsDisplay истина, если элемент меню
+                // showAxisMenuItem отмечен флажком, и ложь - в противном случае
+                display.setShowAxis(showAxisMenuItem.isSelected());
+            }
+        };
+        showAxisMenuItem = new JCheckBoxMenuItem(showAxisAction);
+        // Добавить соответствующий элемент в меню
+        graphicsMenu.add(showAxisMenuItem);
+        // Элемент по умолчанию включен (отмечен флажком)
+        showAxisMenuItem.setSelected(true);
+        // Повторить действия для элемента "Показывать маркеры точек"
+        Action showMarkersAction = new AbstractAction("Показывать маркеры точек") {
+            public void actionPerformed(ActionEvent event) {
+                // по аналогии с showAxisMenuItem
+                display.setShowMarkers(showMarkersMenuItem.isSelected());
+            }
+        };
+        showMarkersMenuItem = new JCheckBoxMenuItem(showMarkersAction);
+        graphicsMenu.add(showMarkersMenuItem);
+        // Элемент по умолчанию включен (отмечен флажком)
+        showMarkersMenuItem.setSelected(true);
+        // Создать действие для элемента "Отобразить функцию «Целая часть f»"
+        Action showIntGraphicsAction = new AbstractAction("Отобразить функцию «Целая часть f»") {
+            public void actionPerformed(ActionEvent e) {
+                display.setShowIntGraphics(showIntGraphicsMenuItem.isSelected());
+            }
+        };
+        showIntGraphicsMenuItem = new JCheckBoxMenuItem(showIntGraphicsAction);
+        graphicsMenu.add(showIntGraphicsMenuItem);
+        showIntGraphicsMenuItem.setSelected(false);
+        // Зарегистрировать обработчик событий, связанных с меню "График"
+        graphicsMenu.addMenuListener(new GraphicsMenuListener());
+        // Установить GraphicsDisplay в цент граничной компоновки
+        getContentPane().add(display, BorderLayout.CENTER);
     }
+
+    
 }
